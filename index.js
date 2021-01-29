@@ -1,33 +1,61 @@
 "use strict";
 
-//Валидация значения в инпуте при фабмите формы
-//кнопка удаления у li - удаляет элемент со строки и его значение из массива
-
 const array = [];
 const form = document.getElementById("root-form");
+const list = document.getElementById("root-list");
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
   const {
-    target: { email },
+    target,
+    target: {
+      todo: { value },
+    },
   } = e;
-  console.dir(email.value);
+  const inputValue = value.trim();
 
-//При каждом сабмите формы - пушить значение инпута в массив
+  //Валидация значения в инпуте при фабмите формы
 
-  array.push(email.value);
+  if (inputValue) {
+    //При каждом сабмите формы - пушить значение инпута в массив
 
-  //Очищать форму после каждого сабмита
+    array.push(inputValue);
 
-  document.getElementById("root-form").reset();
+    //Очищать форму после каждого сабмита
 
-//Рендерить на странице то, что было введено в форму
+    target.reset();
 
-  // const li = create(email.value);
+    // Рендерить на странице то, что было введено в форму
+
+    const li = createListElement(inputValue);
+    list.append(li);
+  }
 });
 
-function create(i) {
+function createListElement(inputValue) {
   const li = document.createElement("li");
-  li.append(i);
+  const liContent = document.createTextNode(inputValue);
+
+  li.append(liContent, createDeleteButton(deleteHandler.bind(li), inputValue));
   return li;
+}
+
+function createDeleteButton(onDelet, inputValue) {
+  const btn = document.createElement("button");
+  btn.dataset.value = inputValue;
+  btn.textContent = "X";
+  btn.addEventListener("click", onDelet);
+  return btn;
+}
+
+//кнопка удаления у li - удаляет элемент со строки и его значение из массива
+
+function deleteHandler(e) {
+  const {
+    target: {
+      dataset: { value },
+    },
+  } = e;
+  this.remove();
+  state.splace(state.indexOf(value), 1);
 }
